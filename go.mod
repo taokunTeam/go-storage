@@ -1,12 +1,13 @@
 module github.com/taokunTeam/go-storage
 
-go 1.17
+go 1.18
 
 require (
-	github.com/aliyun/aliyun-oss-go-sdk v2.1.10+incompatible
-	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
-	github.com/qiniu/go-sdk/v7 v7.11.0
-	github.com/satori/go.uuid v1.2.0 // indirect
+	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20220822054256-cd89716afe70
+	github.com/qiniu/go-sdk/v7 v7.13.0
+)
+
+require (
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
+	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 )
