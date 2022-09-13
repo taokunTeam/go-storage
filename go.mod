@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20220822054256-cd89716afe70
+	github.com/minio/minio-go/v6 v6.0.57
 	github.com/qiniu/go-sdk/v7 v7.13.0
 )
 
@@ -11,7 +12,6 @@ require (
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/klauspost/cpuid v1.2.3 // indirect
 	github.com/minio/md5-simd v1.1.0 // indirect
-	github.com/minio/minio-go/v6 v6.0.57 // indirect
 	github.com/minio/sha256-simd v0.1.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
