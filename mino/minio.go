@@ -3,7 +3,9 @@ package minio
 import (
 	"io"
 	"net/http"
+	"net/url"
 	"sync"
+	"time"
 
 	minioStorage "github.com/minio/minio-go/v6"
 	"github.com/taokunTeam/go-storage/storage"
@@ -21,7 +23,6 @@ type Config struct {
 type minio struct {
 	config *Config
 	client *minioStorage.Client
-	bucket *minioStorage.BucketInfo
 }
 
 var (
@@ -49,11 +50,19 @@ func Init(config Config) (storage.Storage, error) {
 
 func (m *minio) Put(key string, r io.Reader, dataLength int64) error {
 	key = storage.NormalizeKey(key)
+	_, err := m.client.PutObject(m.config.Bucket, key, r, dataLength, minioStorage.PutObjectOptions{})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *minio) PutFile(key string, localFile string) error {
 	key = storage.NormalizeKey(key)
+	_, err := m.client.FPutObject(m.config.Bucket, key, localFile, minioStorage.PutObjectOptions{})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -69,36 +78,73 @@ func (m *minio) Get(key string) (io.ReadCloser, error) {
 }
 
 func (m *minio) Rename(srcKey string, destKey string) error {
-	srcKey = storage.NormalizeKey(srcKey)
-	destKey = storage.NormalizeKey(destKey)
-
+	err := m.Copy(srcKey, destKey)
+	if err != nil {
+		return err
+	}
+	err = m.Delete(srcKey)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *minio) Copy(srcKey string, destKey string) error {
 	srcKey = storage.NormalizeKey(srcKey)
 	destKey = storage.NormalizeKey(destKey)
+	src := minioStorage.NewSourceInfo(m.config.Bucket, srcKey, nil)
+	dst, err := minioStorage.NewDestinationInfo(m.config.Bucket, destKey, nil, nil)
+	if err != nil {
+		return err
+	}
 
+	err = m.client.CopyObject(dst, src)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *minio) Exists(key string) (bool, error) {
 	key = storage.NormalizeKey(key)
+	_, err := m.client.GetObject(m.config.Bucket, key, minioStorage.GetObjectOptions{})
+	if err != nil {
+		return false, err
+	}
 
 	return true, nil
 }
 
 func (m *minio) Size(key string) (int64, error) {
 	key = storage.NormalizeKey(key)
-	return 0, nil
+	object, err := m.client.GetObject(m.config.Bucket, key, minioStorage.GetObjectOptions{})
+	if err != nil {
+		return 0, err
+	}
+	var b []byte
+	size, err := object.Read(b)
+	if err != nil {
+		return 0, err
+	}
+	return int64(size), nil
 }
 
 func (m *minio) Delete(key string) error {
 	key = storage.NormalizeKey(key)
+	err := m.client.RemoveObject(m.config.Bucket, key)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (m *minio) Url(key string) string {
-	return ""
+	key = storage.NormalizeKey(key)
+	reqParams := make(url.Values)
+	presignedURL, err := m.client.PresignedGetObject(m.config.Bucket, key, time.Second*24*60*60, reqParams)
+	if err != nil {
+		return ""
+	}
+	return presignedURL.String()
 }
