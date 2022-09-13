@@ -1,9 +1,11 @@
 package minio
 
 import (
+	"io"
+	"net/http"
 	"sync"
 
-	sminio "github.com/minio/minio-go/v6"
+	minioStorage "github.com/minio/minio-go/v6"
 	"github.com/taokunTeam/go-storage/storage"
 )
 
@@ -18,8 +20,8 @@ type Config struct {
 
 type minio struct {
 	config *Config
-	client *sminio.Client
-	bucket *sminio.BucketInfo
+	client *minioStorage.Client
+	bucket *minioStorage.BucketInfo
 }
 
 var (
@@ -33,7 +35,7 @@ func Init(config Config) (storage.Storage, error) {
 	once.Do(func() {
 		o = &minio{}
 		o.config = &config
-		o.client, initErr = sminio.New(config.Endpoint, config.AccessKeyId, config.AccessKeySecret, config.IsSsl)
+		o.client, initErr = minioStorage.New(config.Endpoint, config.AccessKeyId, config.AccessKeySecret, config.IsSsl)
 		if initErr != nil {
 			return
 		}
@@ -43,4 +45,60 @@ func Init(config Config) (storage.Storage, error) {
 		return nil, initErr
 	}
 	return o, nil
+}
+
+func (m *minio) Put(key string, r io.Reader, dataLength int64) error {
+	key = storage.NormalizeKey(key)
+	return nil
+}
+
+func (m *minio) PutFile(key string, localFile string) error {
+	key = storage.NormalizeKey(key)
+	return nil
+}
+
+func (m *minio) Get(key string) (io.ReadCloser, error) {
+	key = storage.NormalizeKey(key)
+
+	resp, err := http.Get(m.Url(key))
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Body, nil
+}
+
+func (m *minio) Rename(srcKey string, destKey string) error {
+	srcKey = storage.NormalizeKey(srcKey)
+	destKey = storage.NormalizeKey(destKey)
+
+	return nil
+}
+
+func (m *minio) Copy(srcKey string, destKey string) error {
+	srcKey = storage.NormalizeKey(srcKey)
+	destKey = storage.NormalizeKey(destKey)
+
+	return nil
+}
+
+func (m *minio) Exists(key string) (bool, error) {
+	key = storage.NormalizeKey(key)
+
+	return true, nil
+}
+
+func (m *minio) Size(key string) (int64, error) {
+	key = storage.NormalizeKey(key)
+	return 0, nil
+}
+
+func (m *minio) Delete(key string) error {
+	key = storage.NormalizeKey(key)
+
+	return nil
+}
+
+func (m *minio) Url(key string) string {
+	return ""
 }
