@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 
 func TestLocal_Put(t *testing.T) {
 	data, _ := ioutil.ReadFile("../tests/accounts.txt")
-	err := disk.Put("local/accounts.txt", bytes.NewReader(data), int64(len(data)))
+	err := disk.Put("local/accounts.txt", bytes.NewReader(data), int64(len(data)), "text/plain")
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -31,7 +31,7 @@ func TestLocal_Put(t *testing.T) {
 }
 
 func TestLocal_PutFile(t *testing.T) {
-	err := disk.PutFile("local/put_file_accounts.txt", "../tests/accounts.txt")
+	err := disk.PutFile("local/put_file_accounts.txt", "../tests/accounts.txt", "text/plain")
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -50,7 +50,7 @@ func TestLocal_Get(t *testing.T) {
 	}
 
 	data, err := ioutil.ReadAll(body)
-	err = disk.Put("local/get_put_accounts.txt", bytes.NewReader(data), int64(len(data)))
+	err = disk.Put("local/get_put_accounts.txt", bytes.NewReader(data), int64(len(data)), "text/plain")
 	if err != nil {
 		t.Error(err.Error())
 		return

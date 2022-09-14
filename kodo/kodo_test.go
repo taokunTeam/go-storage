@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 
 func TestKodo_Put(t *testing.T) {
 	data, _ := ioutil.ReadFile("../tests/accounts.txt")
-	err := disk.Put("test_data/accounts.txt", bytes.NewReader(data), int64(len(data)))
+	err := disk.Put("test_data/accounts.txt", bytes.NewReader(data), int64(len(data)), "text/plain")
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -35,7 +35,7 @@ func TestKodo_Put(t *testing.T) {
 }
 
 func TestKodo_PutFile(t *testing.T) {
-	err := disk.PutFile("test_data/accounts2.txt", "../tests/accounts.txt")
+	err := disk.PutFile("test_data/accounts2.txt", "../tests/accounts.txt", "text/plain")
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -54,7 +54,7 @@ func TestKodo_Get(t *testing.T) {
 	}
 
 	data, err := ioutil.ReadAll(body)
-	err = disk.Put("test_data/get_put_accounts.txt", bytes.NewReader(data), int64(len(data)))
+	err = disk.Put("test_data/get_put_accounts.txt", bytes.NewReader(data), int64(len(data)), "text/plain")
 	if err != nil {
 		t.Error(err.Error())
 		return

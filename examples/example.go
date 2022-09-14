@@ -17,10 +17,10 @@ func main() {
 	disk, _ := storage.Disk(storage.Local)
 	// 保存文件
 	buf := bytes.NewBuffer([]byte{'A', 'B', 'C', 'D', 'E'})
-	disk.Put("local/accounts.txt", buf, int64(buf.Len()))
+	disk.Put("local/accounts.txt", buf, int64(buf.Len()), "text/plain")
 
 	// 保存本地文件
-	disk.PutFile("path/to/file.ext", "local/path/to/local_file.ext")
+	disk.PutFile("path/to/file.ext", "local/path/to/local_file.ext", "text/plain")
 
 	// 获取文件内容
 	disk.Get("path/to/file.ext")

@@ -58,12 +58,13 @@ func Init(config Config) (storage.Storage, error) {
 	return k, nil
 }
 
-func (k *kodo) Put(key string, r io.Reader, dataLength int64) error {
+func (k *kodo) Put(key string, r io.Reader, dataLength int64, contentType string) error {
 	key = storage.NormalizeKey(key)
 
 	upToken := k.putPolicy.UploadToken(k.mac)
 	ret := qiniuStorage.PutRet{}
-	err := k.formUploader.Put(context.Background(), &ret, upToken, key, r, dataLength, nil)
+	putExtra := qiniuStorage.PutExtra{MimeType: contentType}
+	err := k.formUploader.Put(context.Background(), &ret, upToken, key, r, dataLength, &putExtra)
 	if err != nil {
 		return err
 	}
@@ -71,12 +72,13 @@ func (k *kodo) Put(key string, r io.Reader, dataLength int64) error {
 	return nil
 }
 
-func (k *kodo) PutFile(key string, localFile string) error {
+func (k *kodo) PutFile(key string, localFile string, contentType string) error {
 	key = storage.NormalizeKey(key)
 
 	upToken := k.putPolicy.UploadToken(k.mac)
 	ret := qiniuStorage.PutRet{}
-	err := k.formUploader.PutFile(context.Background(), &ret, upToken, key, localFile, nil)
+	putExtra := qiniuStorage.PutExtra{MimeType: contentType}
+	err := k.formUploader.PutFile(context.Background(), &ret, upToken, key, localFile, &putExtra)
 	if err != nil {
 		return err
 	}

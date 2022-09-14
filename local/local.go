@@ -40,7 +40,7 @@ func (l *local) getPath(key string) string {
 	return filepath.Join(l.config.RootDir, key)
 }
 
-func (l *local) Put(key string, r io.Reader, dataLength int64) error {
+func (l *local) Put(key string, r io.Reader, dataLength int64, contentType string) error {
 	path := l.getPath(key)
 	dir, _ := filepath.Split(path)
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
@@ -61,7 +61,7 @@ func (l *local) Put(key string, r io.Reader, dataLength int64) error {
 	return err
 }
 
-func (l *local) PutFile(key string, localFile string) error {
+func (l *local) PutFile(key string, localFile string, contentType string) error {
 	path := l.getPath(localFile)
 
 	fd, fileInfo, err := storage.OpenAsReadOnly(path)
@@ -70,7 +70,7 @@ func (l *local) PutFile(key string, localFile string) error {
 	}
 	defer fd.Close()
 
-	return l.Put(key, fd, fileInfo.Size())
+	return l.Put(key, fd, fileInfo.Size(), contentType)
 }
 
 func (l *local) Get(key string) (io.ReadCloser, error) {

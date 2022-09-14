@@ -54,10 +54,9 @@ func Init(config Config) (storage.Storage, error) {
 	return o, nil
 }
 
-func (o *oss) Put(key string, r io.Reader, dataLength int64) error {
+func (o *oss) Put(key string, r io.Reader, dataLength int64, contentType string) error {
 	key = storage.NormalizeKey(key)
-
-	err := o.bucket.PutObject(key, r)
+	err := o.bucket.PutObject(key, r, alioss.ContentType(contentType))
 	if err != nil {
 		return err
 	}
@@ -65,10 +64,10 @@ func (o *oss) Put(key string, r io.Reader, dataLength int64) error {
 	return nil
 }
 
-func (o *oss) PutFile(key string, localFile string) error {
+func (o *oss) PutFile(key string, localFile string, contentType string) error {
 	key = storage.NormalizeKey(key)
 
-	err := o.bucket.PutObjectFromFile(key, localFile)
+	err := o.bucket.PutObjectFromFile(key, localFile, alioss.ContentType(contentType))
 	if err != nil {
 		return err
 	}

@@ -48,18 +48,18 @@ func Init(config Config) (storage.Storage, error) {
 	return o, nil
 }
 
-func (m *minio) Put(key string, r io.Reader, dataLength int64) error {
+func (m *minio) Put(key string, r io.Reader, dataLength int64, contentType string) error {
 	key = storage.NormalizeKey(key)
-	_, err := m.client.PutObject(m.config.Bucket, key, r, dataLength, minioStorage.PutObjectOptions{})
+	_, err := m.client.PutObject(m.config.Bucket, key, r, dataLength, minioStorage.PutObjectOptions{ContentType: contentType})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *minio) PutFile(key string, localFile string) error {
+func (m *minio) PutFile(key string, localFile string, contentType string) error {
 	key = storage.NormalizeKey(key)
-	_, err := m.client.FPutObject(m.config.Bucket, key, localFile, minioStorage.PutObjectOptions{})
+	_, err := m.client.FPutObject(m.config.Bucket, key, localFile, minioStorage.PutObjectOptions{ContentType: contentType})
 	if err != nil {
 		return err
 	}
